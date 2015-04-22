@@ -1,4 +1,5 @@
 #include "benchmark.h" 
+#include "motif.h"
 
 
 int main(int argc, char*argv[])
