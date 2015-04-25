@@ -12,7 +12,7 @@ using namespace std;
 class motif
 {
 	public: 
-		void search(map<int, vector<char> > DNA, int ML, int SL); 
+		void search(map<int, string> DNA, int ML); 
 		int score(string sequence, vector<string> prof_matrix);
 };
 

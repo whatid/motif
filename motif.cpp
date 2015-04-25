@@ -6,21 +6,21 @@
 3. At each of the following t-2 iterations, find a best K-mer in sequence i. 
 */ 
 
-void motif::search(map<int, vector<char> > DNA, int ML, int SL)
+void motif::search(map<int, string> DNA, int ML)
 {
-	string string1 (DNA[0].begin(), DNA[0].end());  
-	string string2 (DNA[1].begin(), DNA[1].end()); 
+	string string1 (DNA[0]);  
+	string string2 (DNA[1]); 
 
 	string bestmotif1; 
 	string bestmotif2; 
 
 	int lowest_distance = ML; 
 
-	for (int s1 = 0; s1 < SL-ML; s1++)
+	for (int s1 = 0; s1 < string1.length()-ML; s1++)
 	{
 		string motif1 (&string1[s1], &string1[s1+ML]); 
 	
-		for (int s2 = 0; s2 < SL-ML; s2++)
+		for (int s2 = 0; s2 < string2.length()-ML; s2++)
 		{
 			string motif2 (&string2[s2], &string2[s2+ML]); 
 
@@ -49,8 +49,8 @@ void motif::search(map<int, vector<char> > DNA, int ML, int SL)
 	{
 		int best_score = 0; 
 		string best_motif_i = NULL; 
-		string string_i (DNA[i].begin(), DNA[i].end());
-		for (int s_i = 0; s_i < SL-ML; s_i ++)
+		string string_i (DNA[i]);
+		for (int s_i = 0; s_i < string_i.length()-ML; s_i ++)
 		{
 			
 			string motif_i (&string_i[s_i], &string_i[s_i + ML]);
