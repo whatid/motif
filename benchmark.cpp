@@ -7,8 +7,6 @@ void benchmark::build(int ML, int NM, int SL, int SC, string folder)
 	
 	// step 1
 
-	srand(time(NULL));  
-
 	char nucleotide [4] = {'A', 'C', 'T', 'G'};
 
 	//step 2
@@ -114,6 +112,60 @@ void benchmark::build(int ML, int NM, int SL, int SC, string folder)
 	}
 
 	motifFile.close(); 
+
+	double PWM[4][ML]; 
+
+	normalized_PWM = new double * [4];
+	for (int i = 0; i < 4; i++)
+	{
+		normalized_PWM[i] = new double [ML]; 
+	}  
+
+	ofstream motifPWM; 
+	motifPWM.open((folder + "/motifPWM.txt").c_str()); 
+
+	for (int x = 0; x < 4; x++)
+	{
+		for (int y = 0; y < ML; y++)
+		{
+			PWM[x][y] = 0; 
+			normalized_PWM[x][y] = 0; 
+		}
+	}
+
+	for (int i = 0; i < ML; i++)
+	{
+		if (motif[i] == 'A')
+			PWM[0][i] += SC;
+		else if (motif[i] == 'C')
+			PWM[1][i] += SC; 
+		else if (motif[i] == 'G')
+			PWM[2][i] += SC; 
+		else if (motif[i] == 'T')
+			PWM[3][i] += SC;
+		else 
+		{
+			PWM[0][i] += double(SC)/4.0; 
+			PWM[1][i] += double(SC)/4.0; 
+			PWM[2][i] += double(SC)/4.0; 
+			PWM[3][i] += double(SC)/4.0; 
+		}
+	}
+
+	motifPWM << ">PMOTIF " << ML << endl; 
+	for (int y = 0; y < ML; y++)
+	{
+		for (int x = 0; x < 4; x++)
+		{
+			motifPWM << PWM[x][y] << " "; 
+			normalized_PWM[x][y] = (PWM[x][y] + double(SC) / 1000) / (double(SC) + (double(SC) / 250)); 
+		}
+		motifPWM << endl; 
+	} 
+	motifPWM << "<";
+
+	motifPWM.close(); 
+
 
 
 	//step 9 

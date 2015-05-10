@@ -18,5 +18,6 @@ class benchmark
 		vector<char> motif; 
 		map <int, vector<char> > bindingSites; 
 		vector<int> siteLocation; 
+		double ** normalized_PWM; 
 };
 #endif 
