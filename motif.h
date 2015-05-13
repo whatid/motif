@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <string>
 #include <math.h>
+#include <random>
 
 using namespace std; 
 

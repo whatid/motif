@@ -8,143 +8,123 @@
 
 void motif::search(map<int, string> DNA, int ML)
 {
-
+	random_device rd; 
+	mt19937 gen(rd()); 
 	for (int i = 0; i < DNA.size(); i++)
 	{
-		predicted_sites.push_back(0);
+		predicted_sites.push_back(rand() % (DNA[0].size() - ML));
 	}
-
-	string string1 (DNA[0]);  
-	string string2 (DNA[1]); 
-
-	string bestmotif1; 
-	string bestmotif2; 
-
-	int lowest_distance = ML; 
-	int best_seed = 0; 
-	for (int s1 = 0; s1 < string1.length()-ML; s1++)
+	bool converge = false; 
+	while (!converge)
 	{
-		string motif1 (&string1[s1], &string1[s1+ML]); 
-		matrix.push_back(motif1); 
-		
-		for (int s2 = 0; s2 < string2.length()-ML; s2++)
+		string noob (predicted_sites.begin(), predicted_sites.end()); 
+		for (int index = 0; index < predicted_sites.size(); index++)
 		{
-			string motif2 (&string2[s2], &string2[s2+ML]); 
 
-			// calculate hamming distance
+		int rand_idx = index; //rand() % DNA.size(); 
+		string rand_string (DNA[rand_idx]);  
 
-/*			
-			int distance = 0; 
-			for (int i = 0; i < motif2.length(); i++)
+		double profile[4][ML];
+
+		for (int x = 0; x < 4; x++)
+		{
+			for (int y = 0; y < ML; y++)
 			{
-				if (motif1.at(i) != motif2.at(i))
-					distance ++; 
+				profile[x][y] = 0.0	; 
 			}
-			if (distance < lowest_distance)
-			{
-				lowest_distance = distance; 
-				bestmotif1 = motif1; 
-				bestmotif2 = motif2; 
-
-				predicted_sites[0] = s1; 
-				predicted_sites[1] = s2; 
-			}
-*/
-			matrix.push_back(motif2); 
-			int temp_score = score(motif2, matrix); 
-
-			if (temp_score >= best_seed)
-			{
-				best_seed = temp_score;
-				bestmotif1 = motif1; 
-				bestmotif2 = motif2;  
-				predicted_sites[0] = s1; 
-				predicted_sites[1] = s2; 
-			}
-			matrix.pop_back(); 
-
 		}
-		matrix.pop_back(); 
-	}
-	// form K x 4 seed matrix
-	matrix.push_back(bestmotif1); 
-	matrix.push_back(bestmotif2); 
 
-	for (int i = 2; i < DNA.size(); i++)
-	{
-	//	cout << i << endl; 
-		int best_score = 0; 
-		//cout << "damn what" << endl; 
-		string best_motif_i; 
-	//	cout << "no way" << endl; 
-		string string_i (DNA[i]);
-		for (int s_i = 0; s_i < string_i.length()-ML; s_i ++)
+		for (int i = 0; i < DNA.size(); i++)
 		{
-			
-	//		cout << " wait what?" << endl; 
-			string motif_i (&string_i[s_i], &string_i[s_i + ML]);
-			matrix.push_back(motif_i); 
-			// calc score 
-	//		cout << "is it here?" << endl; 
-			int temp_score = score(motif_i, matrix);
-
-	//		cout << "how bout here?" << endl; 
-			if (temp_score >= best_score)
-			{
-				best_score = temp_score;
-				best_motif_i = motif_i;  
-				predicted_sites[i] = s_i; 
-			}
-
-			matrix.pop_back(); 
-		}
-		matrix.push_back(best_motif_i);
-	}
-
-}
-
-int motif::score(string sequence, vector<string> prof_matrix)
-{
-
-	int width = prof_matrix[0].length(); 
-	int length = 4; 
-
-	int score_matrix[width][length];
-
-	for (int x = 0; x < width; x++)
-	{
-		for (int y = 0; y < length; y++)
-		{
-			score_matrix[x][y] = 0; 
-		}
-	}
-
-	for (int i = 0; i < prof_matrix.size(); i++)
-	{
-		int A = 0, C = 0, G = 0, T = 0; 
-		for (int j = 0; j < prof_matrix[0].length(); j++)
-		{
-			if (prof_matrix[i].at(j) == 'A')
-				score_matrix[j][1] += 1; 
-			else if (prof_matrix[i].at(j) == 'C')
-				score_matrix[j][2] += 1; 
-			else if (prof_matrix[i].at(j) == 'G')
-				score_matrix[j][3] += 1; 
+			if (i == rand_idx)
+				continue; 
 			else 
-				score_matrix[j][4] += 1; 
+			{
+				string lmer (&(DNA[i])[predicted_sites[i]], &(DNA[i])[predicted_sites[i] + ML]); 
+
+				//cout << lmer << endl; 
+				for (int j = 0; j < ML; j++)
+				{
+					if (lmer.at(j) == 'A')
+						profile[0][j]++;
+					else if (lmer.at(j) == 'C')
+						profile[1][j]++; 
+					else if (lmer.at(j) == 'G')
+						profile[2][j]++; 
+					else 
+						profile[3][j]++;  
+				}
+			}
 		}
-	}
-	
-	int final_score = 0; 
 
-	for (int x = 0; x < width; x++)
-	{
-		final_score += max(max(score_matrix[x][1], score_matrix[x][2]) , max(score_matrix[x][3], score_matrix[x][4])); 
-	}
+		for (int y = 0; y < ML; y++)
+		{
+			for (int x = 0; x < 4; x++)
+			{
+				profile[x][y] = double(profile[x][y]) / double(9); 
+			}
+		} 
 
-	return final_score; 
+		map <int, double> distribution; 
+		double lowest = INFINITY; 
+		for (int i = 0; i < rand_string.size()-ML; i++)
+		{	
+			double result = 1; 
+			string motif_i(&rand_string[i], &rand_string[i+ML]); 
+			for (int j = 0; j < motif_i.length(); j++)
+			{
+				if (motif_i.at(j) == 'A')
+					result *= profile[0][j]; 
+				else if (motif_i.at(j) == 'C')
+					result *= profile[1][j]; 
+				else if (motif_i.at(j) == 'G')
+					result *= profile[2][j]; 
+				else 
+					result *= profile[3][j]; 
+			}
+			distribution[i] = result; 
+
+			if (result != 0 && result <= lowest)
+				lowest = result; 
+		}
+		//cout << lowest << endl; 
+		double sum = 0.0; 
+		for (int i = 0; i < distribution.size(); i++)
+		{
+			distribution[i] = distribution[i] / lowest; 
+			sum += distribution[i]; 
+			//cout << sum << endl; 
+		}
+
+		vector<double> probabilities; 
+		for (int i = 0; i < distribution.size(); i++)
+		{
+			distribution[i] = distribution[i] / sum; 
+			probabilities.push_back(distribution[i]); 
+		}
+		
+		discrete_distribution<> dist(probabilities.begin(), probabilities.end());  
+		predicted_sites[rand_idx] = dist(gen); 
+
+
+		}
+
+		bool breh = false; 
+		for (int index = 0; index < predicted_sites.size(); index++)
+		{
+			if (noob.at(index) != predicted_sites[index])
+			{
+				breh = true; 
+				break; 
+			}
+		}
+
+		if (breh)
+			converge = false; 
+		else 
+			converge = true; 
+	}
 }
-
 
 
 

@@ -38,7 +38,6 @@ for x in range(0, 10):
 	time.sleep(2)
 
 
-
 f = plt.plot(overlap)
 plt.ylabel('number of overlapping sites')
 f.show()
