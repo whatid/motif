@@ -1,5 +1,5 @@
-<h3> Motif Finding </h3>
-<p> 
+# Motif Finding
+
 Finds motifs within a set of DNA sequences. Created a benchmark program to generate synthetic data sets.
 The benchmark program takes in 4 inputs: motif length, number of variable positions, sequence length, and sequence count. 
 It then uses a random number generator to build sequences according to these parameters. 
@@ -17,4 +17,4 @@ the frequencies of each character in the motifs.
 
 Evaluation Program: 
 Compared number of overlapping sites with actual sites and running time.
-</p>
+
